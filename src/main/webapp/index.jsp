@@ -15,23 +15,26 @@
 --%>
 <!DOCTYPE html>
 <html>
-<head>
   <title>CodeU Team 5 Chat App</title>
   <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-
   <nav>
     <a id="navTitle" href="/">CodeU Chat App</a>
     <a href="/conversations">Conversations</a>
     <% if(request.getSession().getAttribute("user") != null){ %>
       <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
+    <a href="/following">Following</a>
     <% } else{ %>
-      <a href="/login">Login</a>
-      <a href="/register">Register</a>
-    <% } %>
+    <a href="/login">Login</a>
+     <% } %>
+    <% if(request.getSession().getAttribute("user") != null){ %>
+            <a href="/user/<%= request.getSession().getAttribute("user") %>">Profile</a>
+        <% } %>
+    <a href="/register">Register</a>
     <a href="/about.jsp">About</a>
-    <a href="/testdata">Load Test Data</a>
+    <a href="/activityfeed">Activity Feed</a>
+    <a href="/search">Search</a>
   </nav>
 
   <div id="container">
@@ -49,8 +52,11 @@
             project as well as its team members.</li>
         <li>You can <a href="/testdata">load test data</a> to fill the site with
             example data.</li>
+        <li>You can see exactly what new activities everyone's been up to by visiting our <a href="/activityfeed">Activity Feed</a> page.</li>
       </ul>
+      
     </div>
   </div>
+
 </body>
 </html>

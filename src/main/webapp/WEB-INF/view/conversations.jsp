@@ -29,14 +29,21 @@
     <a href="/conversations">Conversations</a>
     <% if(request.getSession().getAttribute("user") != null){ %>
       <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
+    <a href="/following">Following</a>
     <% } else{ %>
-      <a href="/login">Login</a>
-      <a href="/register">Register</a>
-    <% } %>
+    <a href="/login">Login</a>
+     <% } %>
+    <% if(request.getSession().getAttribute("user") != null){ %>
+            <a href="/user/<%= request.getSession().getAttribute("user") %>">Profile</a>
+        <% } %>
+    <a href="/register">Register</a>
     <a href="/about.jsp">About</a>
+    <a href="/activityfeed">Activity Feed</a>
+    <a href="/search">Search</a>
   </nav>
 
   <div id="container">
+  
 
     <% if(request.getAttribute("error") != null){ %>
         <h2 style="color:red"><%= request.getAttribute("error") %></h2>
@@ -61,27 +68,52 @@
     <%
     List<Conversation> conversations =
       (List<Conversation>) request.getAttribute("conversations");
-    if(conversations == null || conversations.isEmpty()){
-    %>
-      <p>Create a conversation to get started.</p>
+      %>
+      <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search Conversations by name...">
+
+  <table id="myTable">
+    <tr class="header">
+      <th style="width:60%;">Conversation Name</th>
+      <th style="width:40%;">Tags</th>
+    </tr>
     <%
+    for (Conversation conversation : conversations) { %>
+      <tr>
+        <td><a href="/chat/<%= conversation.getTitle() %>">
+          <%=conversation.getTitle()%></a></td>
+        <% if (!conversation.getTags().isEmpty()) {%>
+        <td><%=conversation.getTags().get(0)%></td>
+        <%}%>
+      </tr>
+    <%  
     }
-    else{
     %>
-      <ul class="mdl-list">
-    <%
-      for(Conversation conversation : conversations){
-    %>
-      <li><a href="/chat/<%= conversation.getTitle() %>">
-        <%= conversation.getTitle() %></a></li>
-    <%
-      }
-    %>
-      </ul>
-    <%
-    }
-    %>
-    <hr/>
+  </table>
+  <hr/>
   </div>
+
 </body>
+<script>
+  function myFunction() {
+  // Declare variables 
+  var input, filter, table, tr, td, i, secondColumn;
+
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tr = table.getElementsByTagName("tr");
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      if (td.innerHTML.toUpperCase().indexOf(filter) > -1){
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    } 
+  }
+}
+</script>
+
 </html>

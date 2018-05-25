@@ -35,7 +35,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 
 /** Servlet class responsible for the chat page. */
-public class ChatServlet extends HttpServlet {
+public class TagServlet extends HttpServlet {
 
   /** Store class that gives access to Conversations. */
   private ConversationStore conversationStore;
@@ -100,7 +100,7 @@ public class ChatServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
     String requestUrl = request.getRequestURI();
-    String conversationTitle = requestUrl.substring("/chat/".length());
+    String conversationTitle = requestUrl.substring("/tag/".length());
 
     Conversation conversation = conversationStore.getConversationWithTitle(conversationTitle);
     if (conversation == null) {
@@ -116,7 +116,7 @@ public class ChatServlet extends HttpServlet {
 
     request.setAttribute("conversation", conversation);
     request.setAttribute("messages", messages);
-    request.getRequestDispatcher("/WEB-INF/view/chat.jsp").forward(request, response);
+    request.getRequestDispatcher("/WEB-INF/view/tag.jsp").forward(request, response);
   }
 
   /**
@@ -125,6 +125,7 @@ public class ChatServlet extends HttpServlet {
    * submitted form data. It creates a new Message from that data, adds it to the model, and then
    * redirects back to the chat page.
    */
+  
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
@@ -144,7 +145,7 @@ public class ChatServlet extends HttpServlet {
     }
 
     String requestUrl = request.getRequestURI();
-    String conversationTitle = requestUrl.substring("/chat/".length());
+    String conversationTitle = requestUrl.substring("/tag/".length());
 
     Conversation conversation = conversationStore.getConversationWithTitle(conversationTitle);
     if (conversation == null) {
@@ -153,23 +154,12 @@ public class ChatServlet extends HttpServlet {
       return;
     }
 
-    String messageContent = request.getParameter("message");
+    String tagContent = request.getParameter("tag");
 
     // this removes any HTML from the message content
-    String cleanedMessageContent = Jsoup.clean(messageContent, Whitelist.none());
+   conversation.addTag(tagContent);
 
-    Message message =
-        new Message(
-            UUID.randomUUID(),
-            conversation.getId(),
-            user.getId(),
-            cleanedMessageContent,
-            Instant.now());
-
-    messageStore.addMessage(message);
-    Event event = new NewMessageEvent(username, "placeholder-link", Instant.now(), "message-event", conversationTitle, "placeholder-link");
-    eventStore.addEvent(event);
     // redirect to a GET request
-    response.sendRedirect("/chat/" + conversationTitle);
+    response.sendRedirect("/tag/" + conversationTitle);
   }
 }
