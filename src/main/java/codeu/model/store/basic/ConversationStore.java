@@ -128,6 +128,18 @@ public class ConversationStore {
     return null;
   }
 
+  /**
+  * Access the list of conversations with a specific UUID.
+  */
+  public List<Conversation> getAllConversationsUUID(UUID id) {
+    List <Conversation> result = new ArrayList<Conversation>();
+    for (Conversation conversation: conversations) {
+      if (conversation.getId().equals(id)) {
+        result.add(conversation);
+      }
+    }
+    return result;
+  }
   /** Sets the List of Conversations stored by this ConversationStore. */
   public void setConversations(List<Conversation> conversations) {
     this.conversations = conversations;

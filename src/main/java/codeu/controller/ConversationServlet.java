@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -113,7 +114,6 @@ public class ConversationServlet extends HttpServlet {
       response.sendRedirect("/conversations");
       return;
     }
-
     String conversationTitle = request.getParameter("conversationTitle");
     if (!conversationTitle.matches("[\\w*]*")) {
       request.setAttribute("error", "Please enter only letters and numbers.");
@@ -127,9 +127,10 @@ public class ConversationServlet extends HttpServlet {
       response.sendRedirect("/chat/" + conversationTitle);
       return;
     }
-
+    List<String> tags = new ArrayList<String>();
     Conversation conversation =
-        new Conversation(UUID.randomUUID(), user.getId(), conversationTitle, Instant.now());
+        new Conversation(UUID.randomUUID(), user.getId(), conversationTitle, Instant.now(), tags);
+
 
     conversationStore.addConversation(conversation);
     Event event = new NewConversationEvent(Instant.now(), "conversation-event", conversationTitle, "placeholder-link");

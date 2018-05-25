@@ -30,6 +30,7 @@ public class Conversation {
   public final Instant creation;
   public final String title;
   public List<User> isVisibleTo = new ArrayList<User>();
+  public List<String> tags = new ArrayList<String>();
 
   /**
    * Constructs a new Conversation.
@@ -46,14 +47,14 @@ public class Conversation {
     this.title = title;
     // sets isPrivate to default false
   }
-  public Conversation(UUID id, UUID owner, String title, Instant creation, List<User> isVisibleTo) {
+
+  public Conversation(UUID id, UUID owner, String title, Instant creation, List<String> tags) {
     this.id = id;
     this.owner = owner;
     this.creation = creation;
     this.title = title;
-    this.isVisibleTo = isVisibleTo;
+    this.tags = tags;
   }
-
   /** Returns the ID of this Conversation. */
   public UUID getId() {
     return id;
@@ -77,5 +78,22 @@ public class Conversation {
   /** Returns the List of users following the conversation. */
   public List<User> getFollowedUsers(){
     return isVisibleTo;
+  }
+
+  /** Returns the List of strings that are tags for the conversation. */
+  public List<String> getTags() {
+    return tags;
+  }
+
+  public boolean containsTag(String newTag) {
+    for (String tag : tags) {
+      if (newTag == tag) {
+        return true;
+      }
+    }
+    return false;
+  }
+  public void addTag(String tag) {
+    tags.add(tag);
   }
 }

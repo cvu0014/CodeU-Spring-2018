@@ -3,10 +3,12 @@ package codeu.controller;
 import codeu.model.store.basic.UserStore;
 import codeu.model.data.User;
 import codeu.model.data.Profile;
+import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.store.basic.ProfileStore;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
+import codeu.model.store.basic.ConversationStore;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.List;
@@ -25,7 +27,7 @@ import java.io.File;
 public class ProfileServlet extends HttpServlet {
   /** Store class that gives access to Profiles. */
   private ProfileStore profileStore;
-
+  private ConversationStore conversationStore;
   private MessageStore messageStore;
   private UserStore userStore;
 
@@ -39,6 +41,7 @@ public class ProfileServlet extends HttpServlet {
     setProfileStore(ProfileStore.getInstance());
     setMessageStore(MessageStore.getInstance());
     setUserStore(UserStore.getInstance());
+    setConversationStore(ConversationStore.getInstance());
   }
 
   /**
@@ -65,6 +68,14 @@ public class ProfileServlet extends HttpServlet {
     this.userStore = userStore;
   }
 
+  /**
+   * Sets the ConversationStore used by this servlet. This function provides a common setup method for use
+   * by the test framework or the servlet's init() function.
+   */
+  void setConversationStore(ConversationStore conversationStore) {
+    this.conversationStore = conversationStore;
+  }
+
   /** doGet function will eventually output HTML directly from servlet */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -81,6 +92,7 @@ public class ProfileServlet extends HttpServlet {
       return;
     }
     List<Message> messages = messageStore.getUserMessages(user.getId());
+    List<Conversation> conversations = conversationStore.getAllConversations();
 
     request.setAttribute("profileUser", user);
     request.setAttribute("username", username);
@@ -88,7 +100,7 @@ public class ProfileServlet extends HttpServlet {
     request.setAttribute("about", profile.getAbout());
     request.setAttribute("messages", messages);
     request.setAttribute("photo", profile.getPhoto());
-
+    request.setAttribute("conversations", conversations);
     request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
   }
 

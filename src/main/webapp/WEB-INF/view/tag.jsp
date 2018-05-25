@@ -25,24 +25,8 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 <!DOCTYPE html>
 <html>
 <head>
-  <title><%= conversation.getTitle() %></title>
+  <title><%= conversation.getTitle() %> Tags</title>
   <link rel="stylesheet" href="/css/main.css" type="text/css">
-
-  <style>
-    #chat {
-      background-color: white;
-      height: 500px;
-      overflow-y: scroll
-    }
-  </style>
-
-  <script>
-    // scroll the chat div to the bottom
-    function scrollChat() {
-      var chatDiv = document.getElementById('chat');
-      chatDiv.scrollTop = chatDiv.scrollHeight;
-    };
-  </script>
 </head>
 <body onload="scrollChat()">
 
@@ -67,19 +51,18 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 
   <div id="container">
 
-    <h1><%= conversation.getTitle() %>
+    <h1><%= conversation.getTitle() %> Tags
       <a href="" style="float: right">&#8635;</a></h1>
 
     <hr/>
 
-    <div id="chat">
+    <div id="tags">
       <ul>
     <%
-      for (Message message : messages) {
-        String author = UserStore.getInstance()
-          .getUser(message.getAuthorId()).getName();
+      for (String tag : conversation.getTags()) {
+        
     %>
-      <li><strong><%= author %>:</strong> <%= message.getContent() %></li>
+      <li><strong><%= tag %></strong></li>
     <%
       }
     %>
@@ -89,10 +72,10 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
     <hr/>
 
     <% if (request.getSession().getAttribute("user") != null) { %>
-    <form action="/chat/<%= conversation.getTitle() %>" method="POST">
-        <input type="text" name="message">
+    <form action="/tag/<%= conversation.getTitle() %>" method="POST">
+        <input type="text" name="tag">
         <br/>
-        <button type="submit">Send</button>
+        <button type="submit">Add a Tag</button>
     </form>
     <% } else { %>
       <p><a href="/login">Login</a> to send a message.</p>

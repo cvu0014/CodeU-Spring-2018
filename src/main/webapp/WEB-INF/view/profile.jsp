@@ -17,6 +17,7 @@
 <%@ page import="codeu.model.data.User" %>
 <%@ page import="codeu.model.data.Profile" %>
 <%@ page import="codeu.model.data.Message" %>
+<%@ page import="codeu.model.data.Conversation" %>
 <%@ page import="codeu.model.store.basic.ProfileStore" %>
 <%@ page import="codeu.model.store.basic.ConversationStore" %>
 <%@ page import="java.time.Instant" %>
@@ -39,22 +40,23 @@ Profile profile = (Profile) request.getAttribute("profile");
   <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-
-  <nav>
-    <a id="navTitle" href="/">CodeU Chat App</a>
+<nav>
+  <a id="navTitle" href="/">CodeU Chat App</a>
     <a href="/conversations">Conversations</a>
     <% if(request.getSession().getAttribute("user") != null){ %>
       <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
+    <a href="/following">Following</a>
     <% } else{ %>
-      <a href="/login">Login</a>
-      <a href="/register">Register</a>
-    <% } %>
-    <a href="/about.jsp">About</a>
+    <a href="/login">Login</a>
+     <% } %>
     <% if(request.getSession().getAttribute("user") != null){ %>
-        <a href="/user/<%= request.getSession().getAttribute("user") %>">Profile</a>
-    <% } %>
-  </nav>
-
+            <a href="/user/<%= request.getSession().getAttribute("user") %>">Profile</a>
+        <% } %>
+    <a href="/register">Register</a>
+    <a href="/about.jsp">About</a>
+    <a href="/activityfeed">Activity Feed</a>
+    <a href="/search">Search</a>
+</nav>
   <script language="javascript">
       function showEdit() {
           editProfile.style.display="block";
@@ -121,6 +123,38 @@ Profile profile = (Profile) request.getAttribute("profile");
     <%
       }
     %>
+      </ul>
+    <%
+    }
+    %>
+    <h3>Conversations</h3>
+    <%
+    List<Conversation> conversations = (List<Conversation>) request.getAttribute("conversations");
+    if (conversations == null || conversations.isEmpty()) {
+    %>
+    <h2 style="color:red">No conversations yet!</h2>
+    <%
+    }
+    else {
+    %>
+      <ul class = "mdl-list">
+      <%
+        for(Conversation conversation : conversations) {
+          if (conversation.getOwnerId() == user.getId()) {
+            %>
+            <li><a href="/chat/<%= conversation.getTitle()%>">
+              <%= conversation.getTitle() %></a>
+              &emsp;
+              &emsp;
+              &emsp;
+              &emsp;
+              <a href="/tag/<%= conversation.getTitle()%>">
+                <%= "Edit Tags" %> </a>
+            </li>
+            <%
+          }
+        }
+      %>
       </ul>
     <%
     }
